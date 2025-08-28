@@ -81,4 +81,23 @@ return [
         'validate_csrf_token' => Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
     ],
 
+        /*
+    |--------------------------------------------------------------------------
+    | Stateful Domains
+    |--------------------------------------------------------------------------
+    |
+    | Requests from the following domains / hosts will receive stateful API
+    | authentication cookies. Typically, these should include your local
+    | and production domains which access your API via a frontend SPA.
+    |
+    */
+
+    'stateful' => [
+        'localhost',
+        '127.0.0.1',
+        'localhost:5173',
+        '127.0.0.1:5173',
+        env('FRONTEND_URL', 'http://localhost:5173'),
+    ],
+
 ];

@@ -1,29 +1,29 @@
 <?php
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\HomepageData;
+use Illuminate\Http\Request;
 
 class HomepageController extends Controller
 {
-    // Get all simple content for the homepage
+    // This now ONLY handles the 'hero' section data.
     public function index()
     {
-        // Pluck creates an associative array: ['section' => 'content', ...]
-        $data = HomepageData::pluck('content', 'section')->map(function ($content) {
-            return json_decode($content, true); // Decode each JSON string
-        });
-        return response()->json($data);
+        $heroData = HomepageData::where('section', 'hero')->first();
+        // Provide a default if no data exists in the database yet
+        if (!$heroData) {
+            return response()->json(['hero' => ['title' => 'Default Title', 'subtitle' => 'Default Subtitle']]);
+        }
+        return response()->json(['hero' => json_decode($heroData->content, true)]);
     }
 
-    // Update all simple content sections at once
     public function update(Request $request)
     {
-        $sections = $request->all();
-        foreach ($sections as $section => $content) {
+        $heroContent = $request->input('hero');
+        if ($heroContent) {
             HomepageData::updateOrCreate(
-                ['section' => $section],
-                ['content' => json_encode($content)]
+                ['section' => 'hero'],
+                ['content' => json_encode($heroContent)]
             );
         }
         return response()->json(['message' => 'Homepage content updated successfully!']);
