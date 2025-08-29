@@ -7,28 +7,23 @@ use Illuminate\Support\Facades\Storage;
 
 class TeamMemberController extends Controller {
     public function index() { return response()->json(TeamMember::all()); }
-
     public function store(Request $request) {
-        $data = $request->except('image');
+        $data = $request->validate(['name' => 'required', 'title' => 'required', 'image' => 'nullable|image']);
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('team', 'public');
-            $data['image_url'] = $path;
+            $data['image_url'] = $request->file('image')->store('team', 'public');
         }
         $member = TeamMember::create($data);
         return response()->json($member, 201);
     }
-
     public function update(Request $request, TeamMember $teamMember) {
-        $data = $request->except('image');
+        $data = $request->validate(['name' => 'required', 'title' => 'required', 'image' => 'nullable|image']);
         if ($request->hasFile('image')) {
             if ($teamMember->image_url) { Storage::disk('public')->delete($teamMember->image_url); }
-            $path = $request->file('image')->store('team', 'public');
-            $data['image_url'] = $path;
+            $data['image_url'] = $request->file('image')->store('team', 'public');
         }
         $teamMember->update($data);
         return response()->json($teamMember);
     }
-
     public function destroy(TeamMember $teamMember) {
         if ($teamMember->image_url) { Storage::disk('public')->delete($teamMember->image_url); }
         $teamMember->delete();

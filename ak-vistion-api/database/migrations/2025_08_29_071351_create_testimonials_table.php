@@ -9,14 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-        public function up(): void
+    public function up(): void
     {
-        Schema::create('technologies', function (Blueprint $table) {
+        Schema::create('testimonials', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('short_desc'); // <-- CORRECTED
-            $table->text('long_desc');   // <-- CORRECTED
-            $table->string('image_url')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('technologies');
+        Schema::dropIfExists('testimonials');
     }
 };

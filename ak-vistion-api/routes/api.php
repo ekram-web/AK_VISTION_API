@@ -22,6 +22,10 @@ use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FeaturedItemController;
 use App\Http\Controllers\Api\NewsroomVideoController;
 
+use App\Http\Controllers\Api\GuideController;
+use App\Http\Controllers\Api\VideoController;
+
+
 
 
 /*
@@ -72,12 +76,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('admin/products', ProductController::class);
     Route::apiResource('admin/blog-posts', BlogPostController::class);
     Route::apiResource('admin/support-files', SupportFileController::class);
+    Route::apiResource('admin/guides', GuideController::class);
+Route::apiResource('admin/videos', VideoController::class);
     Route::apiResource('admin/faqs', FaqController::class);
     Route::apiResource('admin/submissions', FormSubmissionController::class)->except(['store', 'update']);
     Route::apiResource('admin/technologies', TechnologyController::class);
-    Route::apiResource('admin/team-members', TeamMemberController::class);
-    Route::apiResource('admin/partners', PartnerController::class);
-    Route::apiResource('admin/statistics', StatisticController::class);
+   Route::apiResource('admin/team-members', TeamMemberController::class);
+Route::apiResource('admin/partners', PartnerController::class);
+Route::apiResource('admin/statistics', StatisticController::class);
     Route::apiResource('admin/testimonials', TestimonialController::class);
      Route::apiResource('admin/featured-items', FeaturedItemController::class);
     Route::apiResource('admin/newsroom-videos', NewsroomVideoController::class);

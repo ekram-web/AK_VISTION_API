@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class NewsroomVideoController extends Controller
-{
+class NewsroomVideoController extends Controller {
     public function index() { return response()->json(NewsroomVideo::all()); }
 
     public function store(Request $request) {

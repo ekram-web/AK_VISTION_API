@@ -3,14 +3,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
-    public function up(): void {
-        Schema::create('featured_items', function (Blueprint $table) {
+        public function up(): void {
+        Schema::create('team_members', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->string('title');
-            $table->string('description');
             $table->string('image_url')->nullable();
             $table->timestamps();
         });
     }
-    public function down(): void { Schema::dropIfExists('featured_items'); }
+    public function down(): void { Schema::dropIfExists('team_members'); }
 };
