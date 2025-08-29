@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 // Import All Controllers
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductPageController;
 use App\Http\Controllers\Api\BlogPostController;
 use App\Http\Controllers\Api\SupportFileController;
 use App\Http\Controllers\Api\FaqController;
@@ -22,21 +23,10 @@ use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FeaturedItemController;
 use App\Http\Controllers\Api\NewsroomVideoController;
 
-use App\Http\Controllers\Api\GuideController;
-use App\Http\Controllers\Api\VideoController;
-
-
-
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
 
 // --- PUBLIC ROUTES (for your frontend website) ---
@@ -55,9 +45,10 @@ Route::get('/team-members', [TeamMemberController::class, 'index']);
 Route::get('/partners', [PartnerController::class, 'index']);
 Route::get('/statistics', [StatisticController::class, 'index']);
 Route::get('/testimonials', [TestimonialController::class, 'index']);
- // --- THIS IS THE CORRECTED & FINAL PART ---
-    Route::apiResource('admin/featured-items', FeaturedItemController::class);
-    Route::apiResource('admin/newsroom-videos', NewsroomVideoController::class)->except(['show', 'update']);
+Route::get('/featured-items', [FeaturedItemController::class, 'index']);
+Route::get('/newsroom-videos', [NewsroomVideoController::class, 'index']);
+Route::get('/product-pages/{category_key}', [ProductPageController::class, 'show']);
+
 
 // --- PUBLIC FORM SUBMISSIONS ---
 Route::post('/submissions', [FormSubmissionController::class, 'store']);
@@ -72,31 +63,36 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', function (Request $request) { return $request->user(); });
 
-    // Full CRUD API Resources for Admin Panel
-    Route::apiResource('admin/products', ProductController::class);
+    // --- FULL CRUD ROUTES (MANUAL DEFINITION FOR ROBUSTNESS) ---
+    // Products
+    Route::get('admin/products', [ProductController::class, 'index']);
+    Route::post('admin/products', [ProductController::class, 'store']);
+    Route::get('admin/products/{product}', [ProductController::class, 'show']);
+    Route::post('admin/products/{product}', [ProductController::class, 'update']); // Using POST for FormData updates
+    Route::delete('admin/products/{product}', [ProductController::class, 'destroy']);
+
+    // Other API Resources
     Route::apiResource('admin/blog-posts', BlogPostController::class);
     Route::apiResource('admin/support-files', SupportFileController::class);
-    Route::apiResource('admin/guides', GuideController::class);
-Route::apiResource('admin/videos', VideoController::class);
     Route::apiResource('admin/faqs', FaqController::class);
     Route::apiResource('admin/submissions', FormSubmissionController::class)->except(['store', 'update']);
     Route::apiResource('admin/technologies', TechnologyController::class);
-   Route::apiResource('admin/team-members', TeamMemberController::class);
-Route::apiResource('admin/partners', PartnerController::class);
-Route::apiResource('admin/statistics', StatisticController::class);
+    Route::apiResource('admin/team-members', TeamMemberController::class);
+    Route::apiResource('admin/partners', PartnerController::class);
+    Route::apiResource('admin/statistics', StatisticController::class);
     Route::apiResource('admin/testimonials', TestimonialController::class);
-     Route::apiResource('admin/featured-items', FeaturedItemController::class);
-    Route::apiResource('admin/newsroom-videos', NewsroomVideoController::class);
+    Route::apiResource('admin/featured-items', FeaturedItemController::class);
+    Route::apiResource('admin/newsroom-videos', NewsroomVideoController::class)->except(['show', 'update']);
 
-    // Page Content Management (GET to read, POST to update)
+    // Page Content Management
     Route::get('admin/pages/homepage', [HomepageController::class, 'index']);
     Route::post('admin/pages/homepage', [HomepageController::class, 'update']);
-
     Route::get('admin/pages/about', [AboutPageController::class, 'index']);
     Route::post('admin/pages/about', [AboutPageController::class, 'update']);
-
     Route::get('admin/pages/services', [ServicesPageController::class, 'index']);
     Route::post('admin/pages/services', [ServicesPageController::class, 'update']);
+    Route::get('admin/product-pages/{category_key}', [ProductPageController::class, 'show']);
+    Route::post('admin/product-pages/{category_key}', [ProductPageController::class, 'update']);
 
     // Legal Pages
     Route::get('admin/legal-pages/{page_key}', [LegalPageController::class, 'show']);
