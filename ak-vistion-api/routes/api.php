@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FeaturedItemController;
 use App\Http\Controllers\Api\NewsroomVideoController;
 
+use App\Http\Controllers\Api\FooterContactDetailController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -49,6 +50,7 @@ Route::get('/featured-items', [FeaturedItemController::class, 'index']);
 Route::get('/newsroom-videos', [NewsroomVideoController::class, 'index']);
 Route::get('/product-pages/{category_key}', [ProductPageController::class, 'show']);
 
+Route::get('/footer-contact-details', [FooterContactDetailController::class, 'index']);
 
 // --- PUBLIC FORM SUBMISSIONS ---
 Route::post('/submissions', [FormSubmissionController::class, 'store']);
@@ -97,4 +99,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Legal Pages
     Route::get('admin/legal-pages/{page_key}', [LegalPageController::class, 'show']);
     Route::post('admin/legal-pages/{page_key}', [LegalPageController::class, 'update']);
+
+    // Add this line for the admin panel's full CRUD functionality
+    Route::apiResource('admin/footer-contact-details', FooterContactDetailController::class);
 });
