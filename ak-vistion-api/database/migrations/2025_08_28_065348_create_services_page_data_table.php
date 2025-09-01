@@ -5,12 +5,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('services_page_data', function (Blueprint $table) {
+        Schema::create('service_page_data', function (Blueprint $table) {
             $table->id();
-            $table->string('section'); // e.g., 'header', 'installation'
+            $table->string('section')->unique(); // 'header', 'installation', 'process'
             $table->json('content');
             $table->timestamps();
         });
     }
-    public function down(): void { Schema::dropIfExists('services_page_data'); }
+    public function down(): void { Schema::dropIfExists('service_page_data'); }
 };

@@ -14,11 +14,12 @@ use App\Http\Controllers\Api\LegalPageController;
 use App\Http\Controllers\Api\FormSubmissionController;
 use App\Http\Controllers\Api\HomepageController;
 use App\Http\Controllers\Api\AboutPageController;
-use App\Http\Controllers\Api\ServicesPageController;
 use App\Http\Controllers\Api\TechnologyController;
 use App\Http\Controllers\Api\TeamMemberController;
 use App\Http\Controllers\Api\PartnerController;
 use App\Http\Controllers\Api\StatisticController;
+use App\Http\Controllers\Api\ServicesPageController;
+use App\Http\Controllers\Api\ServiceCardController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FeaturedItemController;
 use App\Http\Controllers\Api\NewsroomVideoController;
@@ -45,6 +46,8 @@ Route::get('/technologies', [TechnologyController::class, 'index']);
 Route::get('/team-members', [TeamMemberController::class, 'index']);
 Route::get('/partners', [PartnerController::class, 'index']);
 Route::get('/statistics', [StatisticController::class, 'index']);
+Route::get('/services-page-data', [ServicesPageController::class, 'index']);
+Route::get('/service-cards', [ServiceCardController::class, 'index']);
 Route::get('/testimonials', [TestimonialController::class, 'index']);
 Route::get('/featured-items', [FeaturedItemController::class, 'index']);
 Route::get('/newsroom-videos', [NewsroomVideoController::class, 'index']);
@@ -82,7 +85,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('admin/team-members', TeamMemberController::class);
     Route::apiResource('admin/partners', PartnerController::class);
     Route::apiResource('admin/statistics', StatisticController::class);
+       // Services Page Management
+    Route::get('admin/pages/services', [ServicesPageController::class, 'index']);
+    Route::post('admin/pages/services', [ServicesPageController::class, 'update']);
+    Route::apiResource('admin/service-cards', ServiceCardController::class);
     Route::apiResource('admin/testimonials', TestimonialController::class);
+    
     Route::apiResource('admin/featured-items', FeaturedItemController::class);
     Route::apiResource('admin/newsroom-videos', NewsroomVideoController::class)->except(['show', 'update']);
 
