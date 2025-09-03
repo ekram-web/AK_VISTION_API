@@ -56,6 +56,8 @@ Route::get('/newsroom-videos', [NewsroomVideoController::class, 'index']);
 Route::get('/product-pages/{category_key}', [ProductPageController::class, 'show']);
 
 Route::get('/footer-contact-details', [FooterContactDetailController::class, 'index']);
+Route::get('/guides', [GuideController::class, 'index']);
+Route::get('/videos', [VideoController::class, 'index']);
 
 // --- PUBLIC FORM SUBMISSIONS ---
 Route::post('/submissions', [FormSubmissionController::class, 'store']);
