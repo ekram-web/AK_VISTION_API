@@ -23,6 +23,8 @@ use App\Http\Controllers\Api\ServiceCardController;
 use App\Http\Controllers\Api\TestimonialController;
 use App\Http\Controllers\Api\FeaturedItemController;
 use App\Http\Controllers\Api\NewsroomVideoController;
+use App\Http\Controllers\Api\GuideController;
+use App\Http\Controllers\Api\VideoController;
 
 use App\Http\Controllers\Api\FooterContactDetailController;
 /*
@@ -85,12 +87,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('admin/team-members', TeamMemberController::class);
     Route::apiResource('admin/partners', PartnerController::class);
     Route::apiResource('admin/statistics', StatisticController::class);
+
+
+     // --- THIS IS THE CORRECTED PART ---
+    Route::apiResource('admin/guides', GuideController::class);
+    Route::apiResource('admin/videos', VideoController::class);
        // Services Page Management
     Route::get('admin/pages/services', [ServicesPageController::class, 'index']);
     Route::post('admin/pages/services', [ServicesPageController::class, 'update']);
     Route::apiResource('admin/service-cards', ServiceCardController::class);
     Route::apiResource('admin/testimonials', TestimonialController::class);
-    
+
     Route::apiResource('admin/featured-items', FeaturedItemController::class);
     Route::apiResource('admin/newsroom-videos', NewsroomVideoController::class)->except(['show', 'update']);
 
