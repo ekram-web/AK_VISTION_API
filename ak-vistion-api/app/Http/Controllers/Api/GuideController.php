@@ -79,7 +79,7 @@ class GuideController extends Controller
                         Storage::disk('public')->delete($link['path']);
                     }
                 }
-            }
+            }  
         }
         $guide->delete();
         return response()->json(null, 204);

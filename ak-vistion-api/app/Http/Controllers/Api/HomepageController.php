@@ -5,15 +5,20 @@ use App\Models\HomepageData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class HomepageController extends Controller {
-    // This ONLY manages the Hero section text and video.
+class HomepageController extends Controller
+{
     public function index() {
         $heroData = HomepageData::where('section', 'hero')->first();
-        if (!$heroData) { return response()->json(['hero' => ['title' => '', 'subtitle' => '', 'video_url' => '']]); }
-        return response()->json(['hero' => json_decode($heroData->content, true)]);
+        return response()->json(['hero' => $heroData ? json_decode($heroData->content, true) : ['title' => '', 'subtitle' => '']]);
     }
+
     public function update(Request $request) {
-        $data = $request->validate(['title' => 'required', 'subtitle' => 'required', 'video' => 'nullable|file|mimes:mp4,mov']);
+        $data = $request->validate([
+            'title' => 'required|string',
+            'subtitle' => 'required|string',
+            'video' => 'nullable|file|mimes:mp4,mov,avi|max:20480'
+        ]);
+
         $currentData = HomepageData::where('section', 'hero')->first();
         $content = $currentData ? json_decode($currentData->content, true) : [];
 
@@ -21,7 +26,7 @@ class HomepageController extends Controller {
         $content['subtitle'] = $data['subtitle'];
 
         if ($request->hasFile('video')) {
-            if (isset($content['video_url'])) { Storage::disk('public')->delete($content['video_url']); }
+            if (!empty($content['video_url'])) { Storage::disk('public')->delete($content['video_url']); }
             $content['video_url'] = $request->file('video')->store('homepage/hero', 'public');
         }
 

@@ -7,14 +7,17 @@ use Illuminate\Support\Facades\Storage;
 
 class NewsroomVideoController extends Controller {
     public function index() { return response()->json(NewsroomVideo::all()); }
+
     public function store(Request $request) {
-        $data = $request->validate(['video' => 'required|file|mimes:mp4,mov,avi|max:20480']); // 20MB Max
+        $data = $request->validate(['video' => 'required|file|mimes:mp4,mov,avi|max:20480']);
+        $dbData = [];
         if ($request->hasFile('video')) {
-            $data['video_url'] = $request->file('video')->store('homepage/newsroom', 'public');
+            $dbData['video_url'] = $request->file('video')->store('homepage/newsroom', 'public');
         }
-        $video = NewsroomVideo::create($data);
+        $video = NewsroomVideo::create($dbData);
         return response()->json($video, 201);
     }
+
     public function destroy(NewsroomVideo $newsroomVideo) {
         if ($newsroomVideo->video_url) { Storage::disk('public')->delete($newsroomVideo->video_url); }
         $newsroomVideo->delete();

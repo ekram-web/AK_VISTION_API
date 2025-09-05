@@ -5,69 +5,61 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class TestimonialController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         return response()->json(Testimonial::all());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $data = $request->validate([
             'quote' => 'required|string',
-            'author' => 'required|string|max:255',
-            'company' => 'nullable|string|max:255',
+            'company' => 'required|string|max:255',
+            'logo' => 'nullable|image|max:2048'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        if ($request->hasFile('logo')) {
+            $data['logo_url'] = $request->file('logo')->store('testimonials', 'public');
         }
 
-        $testimonial = Testimonial::create($request->all());
+        // --- THIS IS THE CRITICAL FIX ---
+        // We remove the temporary 'logo' key before saving.
+        unset($data['logo']);
+
+        $testimonial = Testimonial::create($data);
         return response()->json($testimonial, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Testimonial $testimonial)
-    {
-        return response()->json($testimonial);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Testimonial $testimonial)
     {
-        $validator = Validator::make($request->all(), [
+        $data = $request->validate([
             'quote' => 'required|string',
-            'author' => 'required|string|max:255',
-            'company' => 'nullable|string|max:255',
+            'company' => 'required|string|max:255',
+            'logo' => 'nullable|image|max:2048'
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+        if ($request->hasFile('logo')) {
+            if ($testimonial->logo_url) {
+                Storage::disk('public')->delete($testimonial->logo_url);
+            }
+            $data['logo_url'] = $request->file('logo')->store('testimonials', 'public');
         }
 
-        $testimonial->update($request->all());
+        unset($data['logo']);
+
+        $testimonial->update($data);
         return response()->json($testimonial);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Testimonial $testimonial)
     {
+        if ($testimonial->logo_url) {
+            Storage::disk('public')->delete($testimonial->logo_url);
+        }
         $testimonial->delete();
         return response()->json(null, 204);
     }
