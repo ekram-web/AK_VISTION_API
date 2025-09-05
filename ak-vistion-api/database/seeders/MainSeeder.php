@@ -69,7 +69,7 @@ class MainSeeder extends Seeder
             ['name' => 'William Lucas', 'title' => 'Co Founder', 'image_url' => 'samples/team1.jpg', 'created_at' => now(), 'updated_at' => now()],
         ]);
         DB::table('partners')->insert([
-            ['name' => 'Intaz', 'logo_url' => 'samples/partner1.png', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Intazr', 'logo_url' => 'samples/partner1.png', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
         // --- 5. BLOG POSTS ---
