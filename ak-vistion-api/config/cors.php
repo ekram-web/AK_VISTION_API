@@ -17,9 +17,17 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => explode(',', env('FRONTEND_URL', 'http://localhost:5173')),
+    'allowed_origins' => [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        'https://website.akvision.net',
+        'https://admin.akvision.net', // for your admin panel
+        env('FRONTEND_URL', 'http://localhost:5173'),
+    ],
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => [
+        '/^https?:\/\/(.*\.)?akvision\.net$/'
+    ],
 
     'allowed_headers' => ['*'],
 

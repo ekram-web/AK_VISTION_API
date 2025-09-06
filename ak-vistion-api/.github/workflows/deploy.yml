@@ -11,43 +11,68 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: "8.2"
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_mysql, dom, filter, gd, json
+
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
       - name: Install Composer Dependencies
-        run: composer install --prefer-dist --no-dev --optimize-autoloader
+        run: composer install --prefer-dist --no-dev --optimize-autoloader --no-interaction
+
+      - name: Generate Application Key
+        run: php artisan key:generate
+
       - name: Prepare Production .env file
         run: |
-          touch .env
-          echo "APP_NAME=AKVistion_API" >> .env
+          echo "APP_NAME=AKVistion_API" > .env
           echo "APP_ENV=production" >> .env
           echo "APP_KEY=${{ secrets.PROD_APP_KEY }}" >> .env
           echo "APP_DEBUG=false" >> .env
           echo "APP_URL=${{ secrets.PROD_APP_URL }}" >> .env
+          echo "" >> .env
           echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=${{ secrets.PROD_DB_HOST }}" >> .env
+
           echo "DB_DATABASE=${{ secrets.PROD_DB_DATABASE }}" >> .env
           echo "DB_USERNAME=${{ secrets.PROD_DB_USERNAME }}" >> .env
           echo "DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" >> .env
-          echo "SANCTUM_STATEFUL_DOMAINS=${{ secrets.PROD_FRONTEND_URLS }}" >> .env
-          echo "SESSION_DOMAIN=.akvision.net" >> .env
-      - name: Deploy Secure App Code
+          echo "" >> .env
+          echo "SANCTUM_STATEFUL_DOMAINS=${{ secrets.SANCTUM_STATEFUL_DOMAINS }}" >> .env
+          echo "SESSION_DOMAIN=${{ secrets.SESSION_DOMAIN }}" >> .env
+          echo "FRONTEND_URL=${{ secrets.PROD_FRONTEND_URLS }}" >> .env
+          echo "" >> .env
+          echo "SESSION_DRIVER=database" >> .env
+          echo "SESSION_LIFETIME=120" >> .env
+          echo "SESSION_ENCRYPT=false" >> .env
+          echo "SESSION_PATH=/" >> .env
+          echo "" >> .env
+          echo "CACHE_STORE=database" >> .env
+          echo "QUEUE_CONNECTION=database" >> .env
+          echo "FILESYSTEM_DISK=local" >> .env
+          echo "" >> .env
+          echo "LOG_CHANNEL=stack" >> .env
+          echo "LOG_LEVEL=error" >> .env
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy-temp
+          rsync -av --exclude-from=.gitignore --exclude='.git*' --exclude='node_modules' --exclude='tests' --exclude='storage/logs/*' . deploy-temp/
+
+      - name: Deploy to cPanel via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-        
+          local-dir: ./deploy-temp/
+          server-dir: /api/
           exclude: |
-            **/public/**
             **/.git*
             **/.git*/**
-      - name: Deploy Public Folder
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-
-          local-dir: ./public/
+            **/node_modules/**
+            **/tests/**
+            **/storage/logs/*
