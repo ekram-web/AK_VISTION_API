@@ -34,45 +34,39 @@ jobs:
           echo "APP_KEY=${{ secrets.PROD_APP_KEY }}" >> .env
           echo "APP_DEBUG=false" >> .env
           echo "APP_URL=${{ secrets.PROD_APP_URL }}" >> .env
-          echo "" >> .env
           echo "DB_CONNECTION=mysql" >> .env
-
           echo "DB_DATABASE=${{ secrets.PROD_DB_DATABASE }}" >> .env
           echo "DB_USERNAME=${{ secrets.PROD_DB_USERNAME }}" >> .env
           echo "DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" >> .env
-          echo "" >> .env
           echo "SANCTUM_STATEFUL_DOMAINS=${{ secrets.SANCTUM_STATEFUL_DOMAINS }}" >> .env
           echo "SESSION_DOMAIN=${{ secrets.SESSION_DOMAIN }}" >> .env
-          echo "FRONTEND_URL=${{ secrets.PROD_FRONTEND_URLS }}" >> .env
-          echo "" >> .env
-          echo "SESSION_DRIVER=database" >> .env
-          echo "SESSION_LIFETIME=120" >> .env
-          echo "SESSION_ENCRYPT=false" >> .env
-          echo "SESSION_PATH=/" >> .env
-          echo "" >> .env
-          echo "CACHE_STORE=database" >> .env
-          echo "QUEUE_CONNECTION=database" >> .env
-          echo "FILESYSTEM_DISK=local" >> .env
-          echo "" >> .env
-          echo "LOG_CHANNEL=stack" >> .env
-          echo "LOG_LEVEL=error" >> .env
+          # Add any other production variables you need
 
-      - name: Create deployment package
-        run: |
-          mkdir -p deploy-temp
-          rsync -av --exclude-from=.gitignore --exclude='.git*' --exclude='node_modules' --exclude='tests' --exclude='storage/logs/*' . deploy-temp/
+      # --- THIS SECTION IS REMOVED as we will use two separate deployment steps ---
+      # - name: Create deployment package
+      #  run: |
+      #    mkdir -p deploy-temp
+      #    rsync ...
 
-      - name: Deploy to cPanel via FTP
+      - name: Deploy Secure App Code
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./deploy-temp/
-          server-dir: /api/
+          # This points to the secure folder
+          server-dir: ./api.akvision.net/api/
           exclude: |
+            **/public/**
             **/.git*
             **/.git*/**
-            **/node_modules/**
-            **/tests/**
-            **/storage/logs/*
+
+      - name: Deploy Public Folder
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # This points to the public document root
+          server-dir: ./api.akvision.net/api/public/
+          local-dir: ./public/
