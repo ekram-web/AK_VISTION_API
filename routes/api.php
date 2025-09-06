@@ -3,8 +3,8 @@
 use Illuminate\Http\Request;
 use  Illuminate\Support\Facades\Route;
 
-Illuminate\Support\Facades\DB;
-use
+use Illuminate\Support\Facades\DB;
+
 // Import All Controllers
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProductController;
