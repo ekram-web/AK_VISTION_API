@@ -1,9 +1,10 @@
 <?php
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
+use  Illuminate\Support\Facades\Route;
 
+Illuminate\Support\Facades\DB;
+use
 // Import All Controllers
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProductController;
@@ -33,7 +34,7 @@ use App\Http\Controllers\Api\FooterContactDetailController;
 | API Routes
 |--------------------------------------------------------------------------
 */
-use Illuminate\Support\Facades\DB; // <-- Add this line at the top with the other 'use' statements
+
 
 // --- ADD THIS NEW TEST ROUTE ---
 Route::get('/health-check', function () {
