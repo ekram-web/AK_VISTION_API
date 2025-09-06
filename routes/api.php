@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 // Import All Controllers
@@ -32,6 +33,25 @@ use App\Http\Controllers\Api\FooterContactDetailController;
 | API Routes
 |--------------------------------------------------------------------------
 */
+use Illuminate\Support\Facades\DB; // <-- Add this line at the top with the other 'use' statements
+
+// --- ADD THIS NEW TEST ROUTE ---
+Route::get('/health-check', function () {
+    try {
+        DB::connection()->getPdo();
+        return response()->json([
+            'status' => 'OK',
+            'message' => 'API is running and database connection is successful!',
+            'laravel_version' => app()->version(),
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'ERROR',
+            'message' => 'API is running, but database connection FAILED.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+});
 
 // --- PUBLIC ROUTES (for your frontend website) ---
 // These are accessible by anyone to view content.
