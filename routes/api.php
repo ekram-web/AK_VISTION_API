@@ -122,6 +122,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('admin/testimonials', TestimonialController::class);
 
     Route::apiResource('admin/featured-items', FeaturedItemController::class);
+    Route::post('admin/featured-items/{featured_item}', [FeaturedItemController::class, 'update']);
     Route::apiResource('admin/newsroom-videos', NewsroomVideoController::class)->except(['show', 'update']);
 
     // Page Content Management
